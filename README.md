@@ -8,3 +8,5 @@ It can be used as sudo user or root,
 being able to launch from the home directory itself 
 or from copying them to /usr/local/bin, 
 listuser and listuserdell with permissions 644, dc-tools 700.
+It is based on the previous turnkey-dc-conf tool I wrote for 
+free Active Directory server management developed by turnkeylinux.org
