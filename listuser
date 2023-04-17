@@ -1,0 +1,49 @@
+samba-tool user list > userdc
+cp  userdc userdc1
+sed -i "s/^/' /" userdc1
+sed -i "s/^/${grupo}/" userdc1
+sed -i "s/^/'/" userdc1
+sed '/./=' userdc | sed '/./N; s/\n/ /' > userdc00
+sed '/./=' userdc1 | sed '/./N; s/\n/) samba-tool group addmembers /' > userdc01
+sed 'a\;;' userdc01 > userdc03
+sed -i 's/$/ off/' userdc00
+
+#sleep 20
+
+touch userdc-to-group
+chmod +x userdc-to-group
+
+###Preparar Ejecutable
+
+echo '#!/bin/bash -x' >> userdc-to-group
+echo 'funcheck=(dialog --separate-output --buildlist "Selet userdc to add the group" 0 0 0)' >> userdc-to-group
+echo '# Definimos las opciones que apareceran en pantalla'  >> userdc-to-group
+echo '# apareceran encendidas las que marquemos con on'  >> userdc-to-group
+
+echo 'opciones=(' >> userdc-to-group
+
+# copiamos los usuarios desde  archivo
+cat userdc00 >> userdc-to-group
+#rm userdc00
+echo ')' >> userdc-to-group
+echo '# Creamos la funcion selecciones que ejecuta funcheck con opciones' >> userdc-to-group
+echo '# y reenvia la salida al terminal para que el for siguiente ejecute' >> userdc-to-group
+echo '# los comandos' >> userdc-to-group
+echo 'selecciones=$("${funcheck[@]}" "${opciones[@]}" 2>&1 >/dev/tty)' >> userdc-to-group
+# limpiamos la pantalla
+clear
+# add un for para que ejecute un comando en funcion de
+# las selecciones realizadas puedes cambiar el echo por
+# cualquier comando o secuencias de comandos
+echo 'for seleccion in $selecciones' >> userdc-to-group
+echo 'do' >> userdc-to-group
+echo 'case $seleccion in' >> userdc-to-group
+cat userdc03 >> userdc-to-group
+echo 'esac' >> userdc-to-group
+echo 'done' >> userdc-to-group
+
+gprdc=$(samba-tool group listmembers "${grupo}")
+(dialog --title "Usuarios de ${grupo}" --backtitle "" --stdout --msgbox "${gprdc}" 0 0)
+./userdc-to-group
+ 
+exit
